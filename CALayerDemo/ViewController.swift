@@ -10,7 +10,7 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    var shapeLayer: CAShapeLayer! {
+    private var shapeLayer: CAShapeLayer! {
         didSet {
             // свойства, которые меняться не будут
             shapeLayer.lineWidth = 20    // толщина линии
@@ -22,7 +22,7 @@ class ViewController: UIViewController {
     }
 
     // второй элемент, который будет показывать загрузку
-    var overShapeLayer: CAShapeLayer! {
+    private var overShapeLayer: CAShapeLayer! {
         didSet {
             // свойства, которые меняться не будут
             overShapeLayer.lineWidth = 20    // толщина линии
@@ -33,7 +33,7 @@ class ViewController: UIViewController {
         }
     }
 
-    var gradientLayer: CAGradientLayer! {
+    private var gradientLayer: CAGradientLayer! {
         didSet {
             // определяем начальную и конечную точку нашего градиента
             gradientLayer.startPoint = CGPoint(x: 0, y: 0)  // левый верхний угол
@@ -46,7 +46,7 @@ class ViewController: UIViewController {
         }
     }
 
-    @IBOutlet weak var imageView: UIImageView! {
+    @IBOutlet private weak var imageView: UIImageView! {
         // срабатывает при присваивании значений (так же при инициализации)
         didSet {
             imageView.layer.cornerRadius = imageView.frame.size.height / 2
@@ -59,7 +59,7 @@ class ViewController: UIViewController {
         }
     }
 
-    @IBOutlet weak var button: UIButton! {
+    @IBOutlet private  weak var button: UIButton! {
         didSet {
             button.layer.shadowOffset = CGSize(width: 0, height: 10)
             button.layer.shadowOpacity = 1
@@ -84,10 +84,24 @@ class ViewController: UIViewController {
     }
 
     @IBAction func actionButton(_ sender: UIButton) {
-        overShapeLayer.strokeEnd += 0.2
-        if overShapeLayer.strokeEnd == 1 {
-            performSegue(withIdentifier: "showSecondScreen", sender: self)
-        }
+//        overShapeLayer.strokeEnd += 0.2
+//        if overShapeLayer.strokeEnd == 1 {
+//            performSegue(withIdentifier: "showSecondScreen", sender: self)
+//        }
+
+        // создаем анимацию
+        let animation = CABasicAnimation(keyPath: "strokeEnd")  // strokeEnd - свойство, которое хотим анимировать
+        animation.toValue = 1  // по окончании должно быть 1
+        animation.duration = 2
+
+        animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
+        animation.fillMode = CAMediaTimingFillMode.both
+        animation.isRemovedOnCompletion = false
+
+        animation.delegate = self
+        overShapeLayer.add(animation, forKey: nil)
+        // тут мы не можем сделать performSegue(withIdentifier: "showSecondScreen", sender: self)
+        // поэтому подпишемся под протокол CAAnimationDelegate
     }
     
 
@@ -116,3 +130,8 @@ class ViewController: UIViewController {
     }
 }
 
+extension ViewController: CAAnimationDelegate {
+    func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+        performSegue(withIdentifier: "showSecondScreen", sender: self)
+    }
+}
