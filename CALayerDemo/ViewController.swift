@@ -16,7 +16,7 @@ class ViewController: UIViewController {
             gradientLayer.endPoint = CGPoint(x: 0, y: 1)  // правый нижний угол
 
             // массив цветов
-            gradientLayer.colors = [UIColor.red.cgColor, UIColor.blue.cgColor, UIColor.green.cgColor]
+            gradientLayer.colors = [UIColor.gray.cgColor, UIColor.blue.cgColor]
             // чтобы цвета неравномерно распределялись
 //            gradientLayer.locations = [0, 0.2, 1]
         }
